@@ -3,6 +3,9 @@ package com.pcwerk.seck;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.pcwerk.seck.crawler.FileManager;
+import com.pcwerk.seck.crawler.MasterQueue;
+
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
@@ -61,7 +64,10 @@ public class App {
   private void crawl() {
     System.out.println("[i]   crawling starts");
     
-    // put in your crawling code here -- all parameters are in params
+    FileManager.setDirectory(params.get("file"));
+    FileManager.populate(params.get("root-url"), Integer.parseInt(params.get("tc")));
+    MasterQueue mq = new MasterQueue(Integer.parseInt(params.get("depth")), Integer.parseInt(params.get("tc")), params.get("file"));
+    mq.runCrawl();
     
     System.out.println("[i]   crawling ends");
   }
