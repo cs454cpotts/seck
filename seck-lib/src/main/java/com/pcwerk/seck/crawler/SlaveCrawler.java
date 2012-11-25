@@ -63,6 +63,7 @@ public class SlaveCrawler extends Crawler{
 			if(!crawled){ 
 				synchronized (this) {
 				System.out.println(id + " " + root);
+				FileManager.saveHash(root.hashCode());
 				FileManager.populate(root, tc);
 				}
 

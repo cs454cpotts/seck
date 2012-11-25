@@ -81,14 +81,14 @@ public class FileManager {
 			PrintWriter out = new PrintWriter(fout);
 			out.println(websiteName);
 			
-			for(int i = 0; i < array.length - 1; i++){
+			for(int i = 0; i < array.length - 2; i++){
 				out.println(array[i]);
 			}
 			
-			for (String line : array) {
-				out.println(line);
-			}
-			
+//			for (String line : array) {
+//				out.println(line);
+//			}
+//			
 			out.close();
 			
 		} catch (Exception e) {
@@ -97,11 +97,15 @@ public class FileManager {
 	}
 	
 	public static void writeFile(String fileName, int hashCode) {
-		File fout = new File(fileName);
-
+		System.out.println("Place to write to: " + fileName);
 		try {
 
 			ArrayList<String> oldList = readFile(fileName);
+			System.out.println("New Update to MasterFile:");
+			for(String line : oldList){
+				System.out.println(line);
+			}
+			File fout = new File(fileName);
 			PrintWriter out = new PrintWriter(fout);
 			oldList.add(hashCode + "");
 			for(String line : oldList){
@@ -119,12 +123,6 @@ public class FileManager {
 	public String[]	getInfo(){
 		return null;
 	}
-	//create temp files from crawlers
-	//check links to masterfile first
-	//prune the duplicates
-	//add others to frontier
-	
-	
 
 	public static synchronized boolean isCrawled(String fileName, String masterFileLocation){
 		
@@ -146,10 +144,11 @@ public class FileManager {
 	public static synchronized void saveData(String fileName, HashSet<String> data)	{
 		//System.out.println(directory.getPath());
 		String localName = directory.getPath().concat("/" + fileName.hashCode() + ".txt");
-		data.add(fileName);
 		//System.out.println(localName);
-		String[] array = new String[data.size()];
+
+		String[] array = new String[data.size() + 1];
 		data.toArray(array).toString();
+		array[array.length - 1] = fileName;
 		FileManager.writeFile(localName, array);
 	}
 	
@@ -168,7 +167,7 @@ public class FileManager {
 		if(webDoc.isHTML()){
 			List<Link> links = webDoc.getLinks();
 			for(Link link : links){
-				System.out.println(link.getUri());
+				//System.out.println(link.getUri());
 				temp.add(link.getUri());
 			}
 		}
@@ -225,7 +224,7 @@ public class FileManager {
 			try {
 				ArrayList<String> data = readFile(directory.concat(fileName + ".txt"));
 				Thread.sleep(10);
-				System.out.println(data.get(0));
+				//System.out.println(data.get(0));
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
@@ -295,9 +294,9 @@ public class FileManager {
 		//queueMaster.remove();
 		System.out.println("Size of master is = " + queueMaster.size());
 		for(Queue<String> n : queueMaster){
-			System.out.println("Queue begins here");
+			//System.out.println("Queue begins here");
 			for(String line : n){
-				System.out.println(line);
+				//System.out.println(line);
 			}
 		}
 	}
@@ -311,6 +310,7 @@ public class FileManager {
 	}
 	
 	public static void populate(String root, int tc){
+		boolean invalidURL = false;
 		URL website;
 		String localName = directory.getPath().concat("/" + root.hashCode() + ".txt");
 		try {
@@ -329,16 +329,26 @@ public class FileManager {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Unable to connect to: " + root);
+			invalidURL = true;
 			
 		} 
-	    File file = new File(localName);
-		
-		FileManager.saveHash(root.hashCode());
-	    
-	    HashSet<String> linksSet = FileManager.extractData(root, file);
-		FileManager.saveData(root, linksSet);
-	    FileManager.updateQueueMaster(linksSet, tc);
+		if(!invalidURL){
+		    File file = new File(localName);
+			
+			//FileManager.saveHash(root.hashCode());
+		    
+		    HashSet<String> linksSet = FileManager.extractData(root, file);
+		    //System.out.println(root);
+			FileManager.saveData(root, linksSet);
+		    FileManager.updateQueueMaster(linksSet, tc);
+		}
+		else{
+			//FileManager.saveHash(root.hashCode());
+			HashSet<String> linksSet = new HashSet<String>();
+			linksSet.add(root);
+			FileManager.updateQueueMaster(linksSet, tc);
+		}
 	}
 	
 }
