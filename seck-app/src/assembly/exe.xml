@@ -12,7 +12,11 @@
       <scope>runtime</scope>
       <includes>
         <include>gnu.getopt:java-getopt</include>
-        <include>pcwerk:seck-lib</include>
+        <include>org.ccil.cowan.tagsoup:tagsoup</include>
+        <include>com.googlecode.juniversalchardet:juniversalchardet:1.0.3</include>
+        <include>org.apache.tika:tika-core</include>
+        <include>org.apache.tika:tika-parsers</include>
+        <include>com.pcwerk:seck-lib</include>
       </includes>
     </dependencySet>
   </dependencySets>
